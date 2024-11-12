@@ -62,7 +62,7 @@ pip install python-telegram-bot
 2.复制粘贴以下命令终端执行，下载并赋予脚本权限
 ```
 git clone https://github.com/QingshiLane/Telegram-homing_pigeon_bot.git
-cd Telegram-BOT
+cd Telegram-homing_pigeon_bot
 chmod +x ./tg_bot_start.sh ./tg_bot_stop.sh
 ```
 3.复制下列命令，修改其中TOKEN和YOUR_USER_ID的值，将机器人的`Token`填入脚本`" "`中（注意将值填入双引号中，保留双引号）。你的`用户ID`同理。终端执行
