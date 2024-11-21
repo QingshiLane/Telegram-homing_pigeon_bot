@@ -63,14 +63,51 @@ async def relay_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if update.message.reply_to_message:
             original_message_id = update.message.reply_to_message.message_id
             original_sender_id = message_sender_map.get(original_message_id)
-            
             if original_sender_id:
-                await context.bot.send_message(chat_id=original_sender_id, text=update.message.text)
+                message = update.message
+                if message.text:
+                    # 处理文本信息
+                    await context.bot.send_message(chat_id=original_sender_id, text=message.text)
+                elif message.photo:
+                    # 处理图片信息
+                    await context.bot.send_photo(chat_id=original_sender_id, photo=message.photo[-1].file_id)
+                elif message.video:
+                    # 处理视频信息
+                    await context.bot.send_video(chat_id=original_sender_id, video=message.video.file_id)
+                elif message.voice:
+                    # 处理语音信息
+                    await context.bot.send_voice(chat_id=original_sender_id, voice=message.voice.file_id)
+                elif message.audio:
+                    # 处理音频信息
+                    await context.bot.send_audio(chat_id=original_sender_id, audio=message.audio.file_id)
+                elif message.document:
+                    # 处理文件信息
+                    await context.bot.send_document(chat_id=original_sender_id, document=message.document.file_id)
+                # await context.bot.send_message(chat_id=original_sender_id, text=update.message.text, photo=update.message.photo[-1].file_id, video=update.message.video.file_id)
             else:
                 await update.message.reply_text("无法识别原始发送者，无法发送消息")
         else:
             if if_private:
-                await context.bot.send_message(chat_id=privater_id, text=update.message.text)
+                message = update.message
+                if message.text:
+                    # 处理文本信息
+                    await context.bot.send_message(chat_id=privater_id, text=message.text)
+                elif message.photo:
+                    # 处理图片信息
+                    await context.bot.send_photo(chat_id=privater_id, photo=message.photo[-1].file_id)
+                elif message.video:
+                    # 处理视频信息
+                    await context.bot.send_video(chat_id=privater_id, video=message.video.file_id)
+                elif message.voice:
+                    # 处理语音信息
+                    await context.bot.send_voice(chat_id=privater_id, voice=message.voice.file_id)
+                elif message.audio:
+                    # 处理音频信息
+                    await context.bot.send_audio(chat_id=privater_id, audio=message.audio.file_id)
+                elif message.document:
+                    # 处理文件信息
+                    await context.bot.send_document(chat_id=privater_id, document=message.document.file_id)
+                # await context.bot.send_message(chat_id=privater_id, text=update.message.text)
             else:
                 await update.message.reply_text("非1v1，您发送的信息仅存在此窗口")
 
@@ -118,7 +155,7 @@ async def enter_private_chat(update: Update, context: ContextTypes.DEFAULT_TYPE)
             for i in range(min(len(recent_chatters), 4))
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text("选择要1v1的聊天对象", reply_markup=reply_markup)
+        await update.message.reply_text("选择要1v1的聊天者", reply_markup=reply_markup)
     else:
         await update.message.reply_text("您无权进行此操作，您只能向我发消息")
 
@@ -176,8 +213,9 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler('exit_1v1', exit_private_chat))
     print("4")
     
-    # Message handler to relay messages
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, relay_message))
+    # Message handler to relay all types of messages
+    app.add_handler(MessageHandler(~filters.COMMAND, relay_message))
+    # app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, relay_message))
     print("5")
     
     # Callback query handler for inline buttons
